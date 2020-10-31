@@ -3,14 +3,14 @@ import matplotlib.image as mpimg
 from PIL import Image
 
 def RGBtoYIQ():
-    img = Image.open("q1Test/Detran_Minas-Gerais.jpg")
-    width, height = img.size
-    out = Image.new('RGB', img.size)
+    img = Image.open("q1Test/Detran_Minas-Gerais.jpg") #abre a imagem p/ leitura
+    width, height = img.size #retorna uma tupla com a altura e largura da imagem e seta os valores nas variaveis
+    out = Image.new('RGB', img.size) #cria o arquivo que vai salvar a imagem convertida 
 
     print ("Convertendo RGB para YIQ")
     for x in range (width):
         for y in range (height):
-            [R,G,B] = img.getpixel((x, y))          
+            [R,G,B] = img.getpixel((x, y)) #pega os valores rgb do pixel indicado e seta nas variáveis         
             Y = 0.299*R + 0.587*G + 0.114*B
             I = 0.596*R - 0.274*G - 0.322*B
             Q = 0.211*R - 0.523*G + 0.312*B   
@@ -20,8 +20,8 @@ def RGBtoYIQ():
             #Q+=128
             
             value = (round(Y),round(I),round(Q))
-            out.putpixel((x, y), value)
-    out.save('q1Test/new.jpg')
+            out.putpixel((x, y), value) #coloca os novos valores dos pixels no arquivo que foi criado p/ salvar a imagem convertida
+    out.save('q1Test/new.jpg') #salva a imagem nova/convertida
     print("Done!")
 
 def YIQtoRGB():
@@ -68,19 +68,22 @@ YIQtoRGB()
 
 filename = ['q1Test/Detran_Minas-Gerais.jpg', 'q1Test/new.jpg', 'q1Test/new2.jpg']
 titles = ['Original', 'RGB to YIQ', 'YIQ to RGB']
-fig=plt.figure(figsize=(8, 8))
+fig=plt.figure(figsize=(8, 8)) #define o tamanho que as figuras terão na janela
+
+#define quantas linhas e colunas de imagem deverão aparecer na mesma janela
 columns = 3
 rows = 1
-ax=[]
+
+figuras=[] #usaremos p/ separar cada imagem p/ poder organiza-las individualmente
 
 for i in range(columns*rows):
-    img = mpimg.imread(filename[i])
-    ax.append(fig.add_subplot(rows, columns, i+1))
-    ax[-1].set_title(titles[i])
-    plt.imshow(img)
-    plt.axis('off')
+    img = mpimg.imread(filename[i])  #lê as imagens
+    figuras.append(fig.add_subplot(rows, columns, i+1)) #adiciona os espaços onde as imagens ficarão na janela
+    figuras[-1].set_title(titles[i]) #seta os títulos
+    plt.imshow(img) #mostra as imagens na janela
+    plt.axis('off') #tira a amostragem dos eixos x e y das imagens
 
-plt.show()
+plt.show() #inicia o loop pra abertura da janela
 
 '''
 #Pra ver individualmente
