@@ -43,4 +43,3 @@ for i in range(columns*rows):
     plt.axis('off') #tira a amostragem dos eixos x e y das imagens
 
 plt.show() #inicia o loop pra abertura da janela
-

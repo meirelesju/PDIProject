@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
-from PIL import Image as pil
 
 def RGBtoYIQ():
     img = mpimg.imread("q1Test/Detran_Minas-Gerais.jpg") #o imreadcarrega a imagem como um array de pixels
@@ -66,19 +65,6 @@ for i in range(columns*rows):
     plt.axis('off') #tira a amostragem dos eixos x e y das imagens
 
 plt.show() #inicia o loop pra abertura da janela'''
- 
-
-#Pra ver individualmente """
-'''
-filename = ['pp.png', 'new.png', 'new2.png']
-for i in range (len(filename)):
-    image = mpimg.imread(filename[i])
-    plt.figure()
-    plt.imshow(image)
-    plt.axis('off')
-
-plt.show()
-'''
 
 Rj = RGBtoYIQ()
 YIQtoRGB(Rj)
