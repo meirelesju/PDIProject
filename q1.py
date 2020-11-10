@@ -3,7 +3,7 @@ import matplotlib.image as mpimg
 import numpy as np
 
 def RGBtoYIQ():
-    img = mpimg.imread("q1Test/Detran_Minas-Gerais.jpg") #o imreadcarrega a imagem como um array de pixels
+    img = mpimg.imread("q1Test/Detran_Minas-Gerais.jpg") #o imreadcarrega a imagem sendo um array de pixels
     plt.imshow(img.astype('uint8'))
     plt.axis('off')
     plt.figure()
@@ -17,8 +17,8 @@ def RGBtoYIQ():
     rgbToYiq = np.dot(img/255,yiq)
 
     x = rgbToYiq
-    plt.imsave('q1Test/imagemyiq.png' , np.asarray(np.array((x - np.min(x)) / (np.max(x) - np.min(x)))) )
-
+    #isso é pra deixar os valores nos limites pra poder salvar a imagem yiq
+    plt.imsave('q1Test/imagemyiq.png' , np.asarray(np.array((x - np.min(x)) / (np.max(x) - np.min(x)))))
     #plt.imshow(np.asarray(np.array((x - np.min(x)) / (np.max(x) - np.min(x)))) )
     #plt.axis('off')
     #plt.figure()
@@ -26,11 +26,12 @@ def RGBtoYIQ():
     return x          
 
 def YIQtoRGB(rgbToYiq):
-
+    #mascara yiq
     yiq =np.array([[ 0.299 , 0.596,  0.211 ],
                 [ 0.587, - 0.274, - 0.523 ],
                 [ 0.114, - 0.322 ,0.312 ]]) 
-
+                
+    #o "inv" server para inverter a matriz yiq pra virar uma matriz rgb
     rgb = np.linalg.inv(yiq)
     
     yiqToRgb = np.dot(rgbToYiq *255,rgb)
