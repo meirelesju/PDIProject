@@ -40,7 +40,7 @@ def YIQtoRGB(rgbToYiq):
     yiqToRgb[yiqToRgb < 0]= 0
 
     y = yiqToRgb
-    plt.imsave('q1Test/imagemrgb.png' , np.asarray(np.array((y - np.min(y)) / (np.max(y) - np.min(y)))) )
+    plt.imsave('q1Test/imagemrgb.png')
 
     #plt.imshow(np.asarray(np.array((y - np.min(y)) / (np.max(y) - np.min(y)))))
     #plt.axis('off')  
