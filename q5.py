@@ -6,8 +6,8 @@ def mediana ():
 
     imagem = mpimg.imread("q5Test/Detran_Minas-Gerais.jpg")
     #tamanho da mascara
-    m = 5
-    n = 5
+    m = 3
+    n = 3
     #pegando o tamanho da imagem
     A, L, rgb = imagem.shape
     #matriz pra armazenar a saida
@@ -28,13 +28,17 @@ def mediana ():
     for y in range (exty , A+exty):
         for x in range (extx , L +extx):
             
-            valoresR = matrizExt[y-exty : y+exty, x-extx : x+extx, 0]
-            valoresG = matrizExt[y-exty : y+exty, x-extx : x+extx, 1]
-            ValoresB = matrizExt[y-exty : y+exty, x-extx : x+extx , 2]
+            valoresR = matrizExt[y-exty : y+exty + 1, x-extx : x+extx + 1, 0]
+            valoresG = matrizExt[y-exty : y+exty + 1, x-extx : x+extx + 1, 1]
+            ValoresB = matrizExt[y-exty : y+exty + 1, x-extx : x+extx + 1, 2]
+          
+            if valoresR.shape[0]* valoresR.shape[1] == 4*2:
+                print(valoresR.shape)
 
-            medianaR = np.median(valoresR)
-            medianaG = np.median(valoresG)
-            medianaB = np.median(ValoresB)
+            medianaR = int(np.median(valoresR))
+            medianaG = int(np.median(valoresG))
+            medianaB = int(np.median(ValoresB))
+             
 
             filtroMediana[y -exty,x -extx,0] = medianaR
             filtroMediana[y -exty,x -extx,1] = medianaG
