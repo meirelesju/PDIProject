@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-
 from scipy import signal
 from sklearn.preprocessing import normalize
 

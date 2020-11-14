@@ -2,18 +2,20 @@ import numpy as np
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-
 from scipy import signal
 from sklearn.preprocessing import normalize
 
-def correlacao(img, mascara):
+from tqdm import tqdm
+
+def produto_matrizes(matriz1, matriz2):
     soma = 0
     # Shape retorna um par (numero de linhas, numero de colunas):
-    for y in range(img.shape[0]):
-        for x in range(img.shape[1]):
-            soma += img.item((y,x)) * mascara.item((y,x))
+    for y in range(matriz1.shape[0]):
+        for x in range(matriz1.shape[1]):
+            soma += matriz1.item((y,x)) * matriz2.item((y,x))
 
     return soma
+
 
 pattern = mpimg.imread("q7Test/babooneye.png")*255
 pattern_altura = len(pattern)
@@ -61,7 +63,7 @@ g_extensao_zero = np.pad(imagem_g, (aumento_extensao_vertical, aumento_extensao_
 b_extensao_zero = np.pad(imagem_b, (aumento_extensao_vertical, aumento_extensao_horizontal), 'constant')
 
 media_correlacao = []
-for y in range(imagem_altura):
+for y in tqdm(range(imagem_altura)):
     # Checa se a vizinhança que será executada agora não ultrapassará a altura da imagem:
     if imagem_altura < (y + pattern_altura):
         # Porque se for ultrapassar já encerra a extração de correlações:
@@ -84,10 +86,9 @@ for y in range(imagem_altura):
         r_vizinhanca = r_extensao_zero[indices_da_vizinhanca]
         g_vizinhanca = g_extensao_zero[indices_da_vizinhanca]
         b_vizinhanca = b_extensao_zero[indices_da_vizinhanca]
-
-        r_correlacao = correlacao(r_vizinhanca, pattern_r)
-        g_correlacao = correlacao(g_vizinhanca, pattern_g)
-        b_correlacao = correlacao(b_vizinhanca, pattern_b)
+        r_correlacao = produto_matrizes(r_vizinhanca, pattern_r)
+        g_correlacao = produto_matrizes(g_vizinhanca, pattern_g)
+        b_correlacao = produto_matrizes(b_vizinhanca, pattern_b)
         
         media_correlacao_rgb = (r_correlacao + g_correlacao + b_correlacao)/3
 
