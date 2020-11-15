@@ -5,61 +5,109 @@ import time
 import numpy as np
 from scipy import signal
 
-def Correlation(img,linhas,colunas,flag):
+def Matriz(linhas,colunas,flag):
+    if(flag == 1):
+    
+    #define linhas e colunas da mascara
+        linhas = 15
+        colunas = 15
+        mask = np.zeros((linhas,colunas))
+        for i in range(colunas):
+            for t in range(linhas):
+                mask[i][t] = 1/(linhas*colunas)
+    else:
+        mask = np.array([[-1,-2,-1],
+                         [0,0,0],
+                         [1,2,1]])
+    
+
+    return mask
+
+def Correlation(img,a,c,mask):
+    img_corr = np.zeros(img.shape, 'uint8')
     height = img.shape[0]
     width = img.shape[1]
-    mask = np.zeros((linhas,colunas))
     h,w = mask.shape
-    if(flag == 1):
-        a = h //2
-        c = w //2
-    else:
-        a = h
-        c = w
-    # garantia que a mascara percorra sem passar pelas extremidades
-    img_corr = np.zeros(img.shape, 'uint8')
-    for i in range(linhas):
-        for t in range(colunas):
-            mask[i][t] = 1/25
     init = time.time()
-    for i in range(a, height - a):
-        for j in range(c, width - c):
+    for i in range(a, height + a):
+        for j in range(c, width + c):
             sumR = 0
             sumG = 0
             sumB = 0
-            for m in range(h):
-                for n in range(w):
-                    sumR += np.multiply(mask[m, n], img[i-h+m, j-w+n, 0])
-                    sumG += np.multiply(mask[m, n], img[i-h+m, j-w+n, 1])
-                    sumB += np.multiply(mask[m, n], img[i-h+m, j-w+n, 2])
-            
-            if sumR < 0:
-                sumR = -sumR
-            elif sumR > 255:
-                sumR = 255
-            if sumG < 0:
-                sumG = -sumG
-            elif sumG > 255:
-                sumG = 255
-            if sumB < 0:
-                sumB = -sumB
-            elif sumB > 255:
-                sumB = 255
-            img_corr[i, j, 0] = sumR
-            img_corr[i, j, 1] = sumG
-            img_corr[i, j, 2] = sumB
-
+            if(c <= width and a <= height ):
+                for m in range(h):
+                    for n in range(w):
+                        sumR += np.multiply(mask[m, n], newR[i+m-a, j-c+n])
+                        sumG += np.multiply(mask[m, n], newG[i-a+m, j-c+n])
+                        sumB += np.multiply(mask[m, n], newB[i-a+m, j-c+n])
+                
+                if sumR < 0:
+                    sumR = -sumR
+                elif sumR > 255:
+                    sumR = 255
+                if sumG < 0:
+                    sumG = -sumG
+                elif sumG > 255:
+                    sumG = 255
+                if sumB < 0:
+                    sumB = -sumB
+                elif sumB > 255:
+                    sumB = 255
+                
+            img_corr[i - a, j - c, 0] = sumR
+            img_corr[i - a , j - c, 1] = sumG
+            img_corr[i - a, j - c, 2] = sumB
+    
     fim = time.time()
     print(fim-init)
     return img_corr
 
 
 
-linhas = 25
-colunas = 25
+
+#abertura da imagem
 img = Image.open("q3Test/slides.png")
 img = np.array(img)
-teste = Correlation(img , linhas,colunas,1)
+
+#altura e largura da imagem
+height = img.shape[0]
+width = img.shape[1]
+
+
+mask = Matriz(15,15,1) 
+    
+h,w = mask.shape
+
+a = h //2
+c = w//2
+
+
+#Quando se faz a extensão por zero é preciso adicionar exatemente a metade da altura e da largura arredondado
+# para baixo a matriz original    
+newR = np.zeros((height+(2*a), width+(2*c)))
+newG = np.zeros((height+(2*a), width+(2*c)))
+newB = np.zeros((height+(2*a), width+(2*c)))
+
+
+
+
+#preenchimento das novas matrizes RGB
+for i in range(height):
+    for j in range(width):
+        if(i<height and j < width ):
+            newR[i +a][j+c] = img[i,j,0]
+                
+            newG[i +a][j+c] = img[i,j,1]  
+            newB[i +a][j+c] = img[i,j,2]     
+    # garantia que a mascara percorra sem passar pelas extremidades
+#preenchimento do filtro media
+
+
+
+
+teste = Correlation(img,a,c,mask)
+
+
 output = Image.fromarray(teste)
-output.save('teste.png')
+output.save('q3Test/media.png')
 output.show()
