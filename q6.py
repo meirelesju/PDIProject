@@ -7,7 +7,7 @@ from scipy import signal
 from sklearn.preprocessing import normalize
 
 
-def correlacaoCruzada():
+def buscaMascaraCorrelacaoCruzadaNormalizada():
     mascara = mpimg.imread("q6Test/babooneye.png")*255
     mascaraR = []
     mascaraG = []
@@ -46,11 +46,14 @@ def correlacaoCruzada():
     #pegando os pixels da imagem
     for y in range (exty , A+exty):
         for x in range (extx , L+extx):
-            
             valoresR = normalize(matrizExt[y-exty : y+exty + 1, x-extx : x+extx + 1, 0])
             valoresG = normalize(matrizExt[y-exty : y+exty + 1, x-extx : x+extx + 1, 1])
             ValoresB = normalize(matrizExt[y-exty : y+exty + 1, x-extx : x+extx + 1, 2])
-
+            # mode='valid' define que o resultado da operação não operará em linhas e colunas extendidas por zero
+            # será apenas a operação pura entre as duas matrizes
+            # boundary='symm' significa que as bordas serão simétricas
+            # É necessário pegar o elemento [0][0], pois o correlate2d apenas retorna uma lista de listas, mesmo
+            # que o resultado seja apenas um elemento
             correlacaoR = signal.correlate2d(valoresR, mascaraNormalizadaR, mode='valid', boundary='symm')[0][0]
             correlacaoG = signal.correlate2d(valoresG, mascaraNormalizadaG, mode='valid', boundary='symm')[0][0]
             correlacaoB = signal.correlate2d(ValoresB, mascaraNormalizadaB, mode='valid', boundary='symm')[0][0]
@@ -74,8 +77,8 @@ def correlacaoCruzada():
     # É criado um retângulo para adicionar na imagem:
     rect = patches.Rectangle((maiorCorrelacaoX-extx, maiorCorrelacaoY-exty), n, m, linewidth=3,edgecolor='b',facecolor='none')
     ax.add_patch(rect) # Adiciona o retângulo na imagem
-    plt.savefig("q6Test/resultado.png") # Salva o que foi plotado
+    plt.savefig("q6Test/q6resultado.png") # Salva o que foi plotado
     plt.show()
     
 
-correlacaoCruzada()
+buscaMascaraCorrelacaoCruzadaNormalizada()
