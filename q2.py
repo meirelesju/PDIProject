@@ -1,4 +1,4 @@
-from q1_nana import RGBtoYIQ, YIQtoRGB
+from q1 import RGBtoYIQ, YIQtoRGB
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from PIL import Image
