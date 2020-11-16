@@ -1,99 +1,61 @@
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import numpy as np
 from PIL import Image
 
-def RGBtoYIQ():
-    img = Image.open("q1Test/Detran_Minas-Gerais.jpg") #abre a imagem p/ leitura
-    width, height = img.size #retorna uma tupla com a altura e largura da imagem e seta os valores nas variaveis
-    out = Image.new('RGB', img.size) #cria o arquivo que vai salvar a imagem convertida 
+def RGBtoYIQ(filename):
+    img = mpimg.imread(filename) #o imreadcarrega a imagem sendo um array de pixels
 
-    print ("Convertendo RGB para YIQ")
-    for x in range (width):
-        for y in range (height):
-            [R,G,B] = img.getpixel((x, y)) #pega os valores rgb do pixel indicado e seta nas variáveis         
-            Y = 0.299*R + 0.587*G + 0.114*B
-            I = 0.596*R - 0.274*G - 0.322*B
-            Q = 0.211*R - 0.523*G + 0.312*B   
-         
-            #print (Y, I, Q)
-            #I+=128
-            #Q+=128
-            
-            value = (round(Y),round(I),round(Q))
-            out.putpixel((x, y), value) #coloca os novos valores dos pixels no arquivo que foi criado p/ salvar a imagem convertida
-    out.save('q1Test/new.jpg') #salva a imagem nova/convertida
-    print("Done!")
+    #mascara yiq
+    yiq =np.array([[ 0.299 , 0.596,  0.211 ],
+                [ 0.587, - 0.274, - 0.523 ],
+                [ 0.114, - 0.322 ,0.312 ]]) 
 
-def YIQtoRGB():
-    img2 = Image.open("q1Test/new.jpg")
-    width, height = img2.size
+    #mutiplicação das matrizes
+    rgbToYiq = np.dot(img/255,yiq) # divide por 255 para ficar com valores entre 0 e 1
+    return rgbToYiq        
 
-    out2 = Image.new('RGB', img2.size)
-    print ("Convertendo YIQ para RGB")
-    for x in range (width):
-            for y in range (height):
-                [Y,I,Q] = img2.getpixel((x, y))
+def YIQtoRGB(rgbToYiq, filepath):
+    #mascara yiq
+    yiq =np.array([[ 0.299 , 0.596,  0.211 ],
+                [ 0.587, - 0.274, - 0.523 ],
+                [ 0.114, - 0.322 ,0.312 ]]) 
                 
-                #I-=128
-                #Q-=128
-          
-                R = 1.000*Y + 0.956*I + 0.621*Q
-                G = 1.000*Y - 0.272*I - 0.647*Q
-                B = 1.000*Y - 1.106*I + 1.703*Q
-                
-                if R >= 256:
-                    R=255 
-                if G >= 256:
-                    G=255
-                if B >= 256:
-                    B=255
-                if R <= 0:
-                    R=0 
-                if G <= 0:
-                    G=0
-                if B <= 0:
-                    B=0
-                
-                value = (round(R),round(G),round(B))
-                out2.putpixel((x, y), value)
-        
-    out2.save('q1Test/new2.jpg')
-    print("Done!")
+    #o "inv" server para inverter a matriz yiq pra virar uma matriz rgb
+    rgb = np.linalg.inv(yiq)
 
-
-RGBtoYIQ()
-YIQtoRGB()
+    yiqToRgb = np.dot(rgbToYiq,rgb) 
+    
+    yiqToRgb[yiqToRgb > 1] = 1
+    yiqToRgb[yiqToRgb < 0] = 0
+    plt.imsave(filepath, yiqToRgb)
 
 #-----------------Visualização das imagens-----------------------#
+def printImages():
+    filename = [initialPath, savePath]
+    titles = ['Original', 'YIQ to RGB']
+    fig=plt.figure(figsize=(7, 7)) #define o tamanho que as figuras terão na janela
 
-filename = ['q1Test/Detran_Minas-Gerais.jpg', 'q1Test/new.jpg', 'q1Test/new2.jpg']
-titles = ['Original', 'RGB to YIQ', 'YIQ to RGB']
-fig=plt.figure(figsize=(8, 8)) #define o tamanho que as figuras terão na janela
+    #define quantas linhas e colunas de imagem deverão aparecer na mesma janela
+    columns = 2
+    rows = 1
 
-#define quantas linhas e colunas de imagem deverão aparecer na mesma janela
-columns = 3
-rows = 1
+    figuras=[] #usaremos p/ separar cada imagem p/ poder organiza-las individualmente
 
-figuras=[] #usaremos p/ separar cada imagem p/ poder organiza-las individualmente
+    for i in range(columns*rows):
+        img = mpimg.imread(filename[i])  #lê as imagens
+        figuras.append(fig.add_subplot(rows, columns, i+1)) #adiciona os espaços onde as imagens ficarão na janela
+        figuras[-1].set_title(titles[i]) #seta os títulos
+        plt.imshow(img) #mostra as imagens na janela
+        plt.axis('off') #tira a amostragem dos eixos x e y das imagens
 
-for i in range(columns*rows):
-    img = mpimg.imread(filename[i])  #lê as imagens
-    figuras.append(fig.add_subplot(rows, columns, i+1)) #adiciona os espaços onde as imagens ficarão na janela
-    figuras[-1].set_title(titles[i]) #seta os títulos
-    plt.imshow(img) #mostra as imagens na janela
-    plt.axis('off') #tira a amostragem dos eixos x e y das imagens
+    plt.show() #inicia o loop pra abertura da janela
 
-plt.show() #inicia o loop pra abertura da janela
-
-'''
-#Pra ver individualmente
-
-filename = ['pp.png', 'new.png', 'new2.png']
-for i in range (len(filename)):
-    image = mpimg.imread(filename[i])
-    plt.figure()
-    plt.imshow(image)
-    plt.axis('off')
-
-plt.show()
-'''
+#Quando importar na questão 2, só irá rodar as funções que eu chamar por causa desse if 
+if __name__ == "__main__":
+    
+    initialPath = 'q1Test/slides.jpg'
+    yiq = RGBtoYIQ(initialPath)
+    savePath = 'q1Test/imagemrgb.jpg'
+    YIQtoRGB(yiq, savePath)
+    printImages()
