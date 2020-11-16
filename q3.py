@@ -35,11 +35,24 @@ def Correlation(img,a,c,mask):
             sumG = 0
             sumB = 0
             if(c <= width and a <= height ):
-                for m in range(h):
-                    for n in range(w):
-                        sumR += np.multiply(mask[m, n], newR[i+m-a, j-c+n])
-                        sumG += np.multiply(mask[m, n], newG[i-a+m, j-c+n])
-                        sumB += np.multiply(mask[m, n], newB[i-a+m, j-c+n])
+                if(a!=0 and c !=0):
+                    for m in range(h):
+                        for n in range(w):
+                            sumR += np.multiply(mask[m, n], newR[i+m-a, j-c+n])
+                            sumG += np.multiply(mask[m, n], newG[i-a+m, j-c+n])
+                            sumB += np.multiply(mask[m, n], newB[i-a+m, j-c+n])
+                elif (a == 0):
+                    for m in range(h):
+                        for n in range(w):
+                            sumR += np.multiply(mask[m, n], newR[i, j-c+n])
+                            sumG += np.multiply(mask[m, n], newG[i, j-c+n])
+                            sumB += np.multiply(mask[m, n], newB[i, j-c+n])
+                elif (c == 0):
+                    for m in range(h):
+                        for n in range(w):
+                            sumR += np.multiply(mask[m, n], newR[i+m-a, j])
+                            sumG += np.multiply(mask[m, n], newG[i-a+m, j])
+                            sumB += np.multiply(mask[m, n], newB[i-a+m, j])
                 
                 if sumR < 0:
                     sumR = -sumR
@@ -109,5 +122,9 @@ teste = Correlation(img,a,c,mask)
 
 
 output = Image.fromarray(teste)
-output.save('q3Test/media.png')
+flag = 1
+if(flag == 1):
+    output.save('q3Test/media.png')
+else:
+    output.save('q3Test/sobel.png')
 output.show()
