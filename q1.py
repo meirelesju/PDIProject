@@ -23,8 +23,9 @@ def YIQtoRGB(rgbToYiq):
                 
     #o "inv" server para inverter a matriz yiq pra virar uma matriz rgb
     rgb = np.linalg.inv(yiq)
-
-    yiqToRgb = np.dot(rgbToYiq,rgb) 
+   
+    yiqToRgb = np.dot(rgbToYiq, rgb)
+    print(yiqToRgb) 
     
     yiqToRgb[yiqToRgb > 1] = 1
     yiqToRgb[yiqToRgb < 0] = 0
